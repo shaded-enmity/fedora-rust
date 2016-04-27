@@ -1,0 +1,24 @@
+FROM fedora:23
+MAINTAINER Pavel Odvody <podvody@redhat.com>
+
+ENV PATH /opt/rust/bin:\\$PATH
+CMD ["/usr/bin/bash"]
+LABEL io.hica.bind_pwd=1\
+      io.hica.command_aliases='{"build-stable": {"cmd": "multirust run stable cargo build", "synopsis": "none"},\
+                                "build-beta": {"cmd": "multirust run beta cargo build", "synopsis": "none"},\
+                                "build-nightly": {"cmd": "multirust run nightly cargo build", "synopsis": "none"}}'\
+      io.hica.tty=1
+
+RUN dnf install -y clang file findutils gcc git llvm redhat-rpm-config tar \
+    {clang,zlib}-devel
+
+RUN useradd fedora
+
+RUN git clone --recursive https://github.com/brson/multirust && cd multirust \
+ && git submodule update --init \
+ && ./build.sh && ./install.sh --prefix=/opt/rust
+
+USER fedora
+WORKDIR /home/fedora
+
+RUN multirust update
