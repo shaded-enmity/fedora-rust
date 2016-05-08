@@ -1,7 +1,7 @@
 FROM fedora:rawhide
 MAINTAINER Pavel Odvody <podvody@redhat.com>
 
-ENV PATH /opt/rust/bin:\\$PATH
+ENV PATH="/opt/rust/bin:$PATH"
 CMD ["/usr/bin/bash"]
 LABEL io.hica.bind_pwd=1\
       io.hica.command_aliases='{"build-stable": {"cmd": "multirust run stable cargo build", "synopsis": "none"},\
