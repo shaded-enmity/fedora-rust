@@ -1,0 +1,21 @@
+FROM fedora:23
+MAINTAINER Pavel Odvody <podvody@redhat.com>
+
+RUN dnf install -y clang file findutils gcc git llvm redhat-rpm-config tar \
+    {clang,zlib}-devel
+RUN useradd fedora
+
+USER fedora
+WORKDIR /home/fedora
+RUN curl https://sh.rustup.rs -sSf > rustup\
+ && bash rustup -y
+
+RUN rustup update stable && rustup update beta && rustup update nightly
+
+ENV PATH="/home/fedora/.cargo/bin:$PATH"
+CMD ["/usr/bin/bash"]
+LABEL io.hica.bind_pwd=1\
+      io.hica.command_aliases='{"build-stable": {"cmd": "rustup run stable cargo build", "synopsis": "none"},\
+                                "build-beta": {"cmd": "rustup run beta cargo build", "synopsis": "none"},\
+                                "build-nightly": {"cmd": "rustup run nightly cargo build", "synopsis": "none"}}'\
+      io.hica.tty=1

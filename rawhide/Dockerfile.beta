@@ -1,0 +1,17 @@
+FROM fedora:rawhide
+MAINTAINER Pavel Odvody <podvody@redhat.com>
+
+RUN dnf install -y clang file findutils gcc git llvm redhat-rpm-config tar \
+    {clang,zlib}-devel
+RUN useradd fedora
+
+USER fedora
+WORKDIR /home/fedora
+RUN curl https://sh.rustup.rs -sSf > rustup\
+ && bash rustup -y --default-toolchain beta
+
+ENV PATH="/home/fedora/.cargo/bin:$PATH"
+CMD ["/usr/bin/bash"]
+LABEL io.hica.bind_pwd=1\
+      io.hica.command_aliases='{"build": {"cmd": "rustup run beta cargo build", "synopsis": "none"}}'\
+      io.hica.tty=1
